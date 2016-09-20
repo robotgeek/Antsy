@@ -6,12 +6,13 @@ Walking.h
 #define WALKING
 
 //####################################################//
-//Servo Pin Defines
+//Servo Objects
 //####################################################//
 
-#define CENTER 9       //Center Servo Digital Pin Assignment
-#define RIGHT 10       //Right Servo Digital Pin Assignment
-#define LEFT 11        //Left Servo Digital Pin Assignment
+enum
+{
+	CENTER_SERVO = 0, RIGHT_SERVO, LEFT_SERVO
+};
 
 //####################################################//
 //Center Servo Values & Ranges
@@ -59,16 +60,13 @@ extern int centerServoValue;   //current positional value being sent to the cent
 extern int rightServoValue;  //current positional value being sent to the right servo.
 extern int leftServoValue;  //current positional value being sent to the left servo.
 
-// Delay values for walking sequences.
+// Delay values & speed for walking sequences.
 extern int delayValue;
 extern int delayValue2;
+extern int time;
 
-
-//####################################################//
-//Servo Objects
-//####################################################//
-
-extern Servo centerServo, rightServo, leftServo;  // create servo objects to control the center, right, and left servos.
+#define MIN_SPEED 1000
+#define MAX_SPEED 200
 
 //####################################################//
 //Center Servo Values & Ranges
@@ -102,68 +100,76 @@ extern int leftBackSweep;
 //FORWARD WALKING POSES
 //####################################################//
 
-void RightUpForward(int leftOffset, int rightOffset);
+void RightUpForward(unsigned int leftOffset, unsigned int rightOffset);
 
-void LeftUpForward(int leftOffset, int rightOffset);
+void LeftUpForward(unsigned int leftOffset, unsigned int rightOffset);
 
-void RightCenterForward();
+void RightCenterForward(unsigned int leftOffset, unsigned int rightOffset, unsigned int deltaTime);
 
-void LeftCenterForward();
+void LeftCenterForward(unsigned int leftOffset, unsigned int rightOffset, unsigned int deltaTime);
 
-void Center();
 
 //####################################################//
 //BACKWARD WALKING POSES
 //####################################################//
 
-void RightUpBackward();
+void RightUpBackward(unsigned int deltaTime);
 
-void LeftUpBackward();
+void LeftUpBackward(unsigned int deltaTime);
 
-void RightCenterBackward();
+void RightCenterBackward(unsigned int deltaTime);
 
-void LeftCenterBackward();
-
+void LeftCenterBackward(unsigned int deltaTime);
 
 
 //####################################################//
 // RIGHT TURN WALKING POSES
 //####################################################//
 
-void RightUpTurnRight();
+void RightUpTurnRight(unsigned int deltaTime);
 
-void LeftUpTurnRight();
+void LeftUpTurnRight(unsigned int deltaTime);
 
-void RightCenterTurnRight();
+void RightCenterTurnRight(unsigned int deltaTime);
 
-void LeftCenterTurnRight();
+void LeftCenterTurnRight(unsigned int deltaTime);
 
 
 //####################################################//
 //LEFT TURN WALKING POSES
 //####################################################//
 
-void RightUpTurnLeft();
+void RightUpTurnLeft(unsigned int deltaTime);
 
-void LeftUpTurnLeft();
+void LeftUpTurnLeft(unsigned int deltaTime);
 
-void RightCenterTurnLeft();
+void RightCenterTurnLeft(unsigned int deltaTime);
 
-void LeftCenterTurnLeft();
+void LeftCenterTurnLeft(unsigned int deltaTime);
 
 
 //####################################################//
 //WALK CYCLE FUNCTIONS
 //####################################################//
 
-void TurnRight(int cycle);
+void TurnRight(unsigned int cycle, unsigned int speed);
 
-void TurnLeft(int cycle);
+void TurnLeft(unsigned int cycle, unsigned int speed);
 
-void WalkForward(int cycle);
+void WalkForward(unsigned int cycle, unsigned int speed);
 
-void WalkBackward(int cycle);
+void WalkBackward(unsigned int cycle, unsigned int speed);
 
-void DriveForward(int turn, int cycle);
+void DriveForward(int turn, unsigned int cycle, unsigned int speed);
+
+//####################################################//
+//SERVO INTERPOLATION FUNCTIONS
+//####################################################//
+
+void SetServo(unsigned int deltaTime);
+
+void SetServoCenter(unsigned int deltaTime);
+
+void initializeServos();
 
 #endif

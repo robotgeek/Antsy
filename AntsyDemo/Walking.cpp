@@ -2,17 +2,25 @@
 Walking.cpp
  *****************************************************************************/
 
-#include <Servo.h>
+#include <ServoEx.h>
 #include <Arduino.h>
 #include "Walking.h"
 
-#define DEBUG
+//#define DEBUG
 
 //####################################################//
 //Servo Objects
 //####################################################//
 
-Servo centerServo, rightServo, leftServo;  // create servo objects to control the center, right, and left servos.
+ServoEx AntsyServo[3];
+
+void initializeServos()
+{
+  //initialize servo objects, set min/max range values.
+  AntsyServo[CENTER_SERVO].attach(9, CENTER_MIN, CENTER_MAX);      // attaches/activates the center servo to pin 9 sets min/max values
+  AntsyServo[RIGHT_SERVO].attach(10, RIGHT_MIN, RIGHT_MAX);  // attaches/activates the right servo to pin 10, sets min/max values
+  AntsyServo[LEFT_SERVO].attach(11, LEFT_MIN, LEFT_MAX);  // attaches/activates the left servo to pin 11, sets min/max values
+}
 
 //####################################################//
 //Center Servo Values & Ranges
@@ -21,7 +29,7 @@ Servo centerServo, rightServo, leftServo;  // create servo objects to control th
 int centerShiftRange = 400;  //Range of this value should be 300-400. Controls the amount of vertical lift provided by the center servo.
 int centerRightDown = CENTER_CENTER - centerShiftRange;
 int centerLeftDown = CENTER_CENTER + centerShiftRange;
-
+int centerCenter = CENTER_CENTER;
 
 //####################################################//
 //Right Servo Values & Ranges
@@ -49,21 +57,23 @@ int rightServoValue = 1500;  //current positional value being sent to the right 
 int leftServoValue = 1500;  //current positional value being sent to the left servo.
 
 // Delay values for walking sequences.
-int delayValue = 180;
+int delayValue = 25;
 int delayValue2 = 250;
+int time = 250;
 
 
 //####################################################//
 //FORWARD WALKING POSES
 //####################################################//
 
-void RightUpForward(int leftOffset, int rightOffset)
+void RightUpForward(unsigned int leftOffset, unsigned int rightOffset, unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(centerRightDown);
+  centerServoValue = centerRightDown;
+  rightServoValue = (rightFrontSweep - rightOffset);  //1700 normally
+  leftServoValue = (leftBackSweep - leftOffset);    //1700 normally
+  SetServo(time);
+  delay(time);
   delay(delayValue);
-  rightServo.writeMicroseconds(rightFrontSweep - rightOffset);  //1700 normally
-  leftServo.writeMicroseconds(leftBackSweep - leftOffset);    //1700 normally
-  delay(delayValue2);
 
 #ifdef DEBUG
   int tempRight = (rightFrontSweep - rightOffset);
@@ -78,13 +88,14 @@ void RightUpForward(int leftOffset, int rightOffset)
 #endif
 }
 
-void LeftUpForward(int leftOffset, int rightOffset)
+void LeftUpForward(unsigned int leftOffset, unsigned int rightOffset, unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(centerLeftDown);
+  centerServoValue = centerLeftDown;
+  rightServoValue = (rightBackSweep + rightOffset);  //1300 normally
+  leftServoValue = (leftFrontSweep + leftOffset);  //1300 normally
+  SetServo(time);
+  delay(time);
   delay(delayValue);
-  rightServo.writeMicroseconds(rightBackSweep + rightOffset);  //1300 normally
-  leftServo.writeMicroseconds(leftFrontSweep + leftOffset);  //1300 normally
-  delay(delayValue2);
 
 #ifdef DEBUG
   int tempRight = (rightBackSweep + rightOffset);
@@ -100,63 +111,69 @@ void LeftUpForward(int leftOffset, int rightOffset)
 
 }
 
-void RightCenterForward()
+void RightCenterForward(unsigned int leftOffset, unsigned int rightOffset, unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(CENTER_CENTER);
-  rightServo.writeMicroseconds(rightFrontSweep);
-  leftServo.writeMicroseconds(leftBackSweep);
-  delay(delayValue2);
+  centerServoValue = (centerCenter);
+  rightServoValue = (rightFrontSweep - rightOffset);  //1700 normally
+  leftServoValue = (leftBackSweep - leftOffset);    //1700 normally
+  SetServo(deltaTime);
+  delay(deltaTime);
+  delay(delayValue);
 }
 
-void LeftCenterForward()
+void LeftCenterForward(unsigned int leftOffset, unsigned int rightOffset, unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(CENTER_CENTER);
-  rightServo.writeMicroseconds(rightBackSweep);
-  leftServo.writeMicroseconds(leftFrontSweep);
-  delay(delayValue2);
+  centerServoValue = (centerCenter);
+  rightServoValue = (rightBackSweep + rightOffset);  //1300 normally
+  leftServoValue = (leftFrontSweep + leftOffset);  //1300 normally
+  SetServo(deltaTime);
+  delay(deltaTime);
+  delay(delayValue);
 }
 
-void Center()
-{
-  centerServo.writeMicroseconds(CENTER_CENTER);
-  rightServo.writeMicroseconds(RIGHT_CENTER);
-  leftServo.writeMicroseconds(LEFT_CENTER);
-  delay(delayValue2);
-}
+
 
 //####################################################//
 //BACKWARD WALKING POSES
 //####################################################//
 
-void RightUpBackward()
+void RightUpBackward(unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(centerRightDown);
-  rightServo.writeMicroseconds(rightBackSweep);
-  leftServo.writeMicroseconds(leftFrontSweep);
+  centerServoValue = (centerRightDown);
+  rightServoValue = (rightBackSweep);
+  leftServoValue = (leftFrontSweep);
+  SetServo(deltaTime);
+  delay(deltaTime);
   delay(delayValue);
 }
 
-void LeftUpBackward()
+void LeftUpBackward(unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(centerLeftDown);
-  rightServo.writeMicroseconds(rightFrontSweep);
-  leftServo.writeMicroseconds(leftBackSweep);
+  centerServoValue = (centerLeftDown);
+  rightServoValue = (rightFrontSweep);
+  leftServoValue = (leftBackSweep);
+  SetServo(deltaTime);
+  delay(deltaTime);
   delay(delayValue);
 }
 
-void RightCenterBackward()
+void RightCenterBackward(unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(CENTER_CENTER);
-  rightServo.writeMicroseconds(rightBackSweep);
-  leftServo.writeMicroseconds(leftFrontSweep);
+  centerServoValue = (centerCenter);
+  rightServoValue = (rightBackSweep);
+  leftServoValue = (leftFrontSweep);
+  SetServo(deltaTime);
+  delay(deltaTime);
   delay(delayValue);
 }
 
-void LeftCenterBackward()
+void LeftCenterBackward(unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(CENTER_CENTER);
-  rightServo.writeMicroseconds(rightFrontSweep);
-  leftServo.writeMicroseconds(leftBackSweep);
+  centerServoValue = (centerCenter);
+  rightServoValue = (rightFrontSweep);
+  leftServoValue = (leftBackSweep);
+  SetServo(deltaTime);
+  delay(deltaTime);
   delay(delayValue);
 }
 
@@ -166,35 +183,43 @@ void LeftCenterBackward()
 // RIGHT TURN WALKING POSES
 //####################################################//
 
-void RightUpTurnRight()
+void RightUpTurnRight(unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(centerRightDown);
-  rightServo.writeMicroseconds(rightBackSweep);
-  leftServo.writeMicroseconds(leftBackSweep);
+  centerServoValue = (centerRightDown);
+  rightServoValue = (rightBackSweep);
+  leftServoValue = (leftBackSweep);
+  SetServo(deltaTime);
+  delay(deltaTime);
   delay(delayValue);
 }
 
-void LeftUpTurnRight()
+void LeftUpTurnRight(unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(centerLeftDown);
-  rightServo.writeMicroseconds(rightFrontSweep);
-  leftServo.writeMicroseconds(leftFrontSweep);
+  centerServoValue = (centerLeftDown);
+  rightServoValue = (rightFrontSweep);
+  leftServoValue = (leftFrontSweep);
+  SetServo(deltaTime);
+  delay(deltaTime);
   delay(delayValue);
 }
 
-void RightCenterTurnRight()
+void RightCenterTurnRight(unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(CENTER_CENTER);
-  rightServo.writeMicroseconds(rightBackSweep);
-  leftServo.writeMicroseconds(leftBackSweep);
+  centerServoValue = (centerCenter);
+  rightServoValue = (rightBackSweep);
+  leftServoValue = (leftBackSweep);
+  SetServo(deltaTime);
+  delay(deltaTime);
   delay(delayValue);
 }
 
-void LeftCenterTurnRight()
+void LeftCenterTurnRight(unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(CENTER_CENTER);
-  rightServo.writeMicroseconds(rightFrontSweep);
-  leftServo.writeMicroseconds(leftFrontSweep);
+  centerServoValue = (centerCenter);
+  rightServoValue = (rightFrontSweep);
+  leftServoValue = (leftFrontSweep);
+  SetServo(deltaTime);
+  delay(deltaTime);
   delay(delayValue);
 }
 
@@ -203,35 +228,43 @@ void LeftCenterTurnRight()
 //LEFT TURN WALKING POSES
 //####################################################//
 
-void RightUpTurnLeft()
+void RightUpTurnLeft(unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(centerRightDown);
-  rightServo.writeMicroseconds(rightFrontSweep);
-  leftServo.writeMicroseconds(leftFrontSweep);
+  centerServoValue = (centerRightDown);
+  rightServoValue = (rightFrontSweep);
+  leftServoValue = (leftFrontSweep);
+  SetServo(deltaTime);
+  delay(deltaTime);
   delay(delayValue);
 }
 
-void LeftUpTurnLeft()
+void LeftUpTurnLeft(unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(centerLeftDown);
-  rightServo.writeMicroseconds(rightBackSweep);
-  leftServo.writeMicroseconds(leftBackSweep);
+  centerServoValue = (centerLeftDown);
+  rightServoValue = (rightBackSweep);
+  leftServoValue = (leftBackSweep);
+  SetServo(deltaTime);
+  delay(deltaTime);
   delay(delayValue);
 }
 
-void RightCenterTurnLeft()
+void RightCenterTurnLeft(unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(CENTER_CENTER);
-  rightServo.writeMicroseconds(rightFrontSweep);
-  leftServo.writeMicroseconds(leftFrontSweep);
+  centerServoValue = (centerCenter);
+  rightServoValue = (rightFrontSweep);
+  leftServoValue = (leftFrontSweep);
+  SetServo(deltaTime);
+  delay(deltaTime);
   delay(delayValue);
 }
 
-void LeftCenterTurnLeft()
+void LeftCenterTurnLeft(unsigned int deltaTime)
 {
-  centerServo.writeMicroseconds(CENTER_CENTER);
-  rightServo.writeMicroseconds(rightBackSweep);
-  leftServo.writeMicroseconds(leftBackSweep);
+  centerServoValue = (centerCenter);
+  rightServoValue = (rightBackSweep);
+  leftServoValue = (leftBackSweep);
+  SetServo(deltaTime);
+  delay(deltaTime);
   delay(delayValue);
 }
 
@@ -240,90 +273,121 @@ void LeftCenterTurnLeft()
 //WALK CYCLE FUNCTIONS
 //####################################################//
 
-void TurnRight(int cycle)
+void TurnRight(unsigned int cycle, unsigned int speed)
 {
+  speed = constrain(speed, 1, 100);
+  speed = map(speed, 1, 100, MIN_SPEED, MAX_SPEED);
   int i = 0;
   while (i <= cycle)
   {
-    LeftUpTurnRight();
-    LeftCenterTurnRight();
-    RightUpTurnRight();
-    RightCenterTurnRight();
+    LeftUpTurnRight(speed);
+    LeftCenterTurnRight(speed);
+    RightUpTurnRight(speed);
+    RightCenterTurnRight(speed);
     i++;
   }
 }
 
-void TurnLeft(int cycle)
+void TurnLeft(unsigned int cycle, unsigned int speed)
 {
+  speed = constrain(speed, 1, 100);
+  speed = map(speed, 1, 100, MIN_SPEED, MAX_SPEED);
   int i = 0;
   while (i <= cycle)
   {
-    LeftUpTurnLeft();
-    LeftCenterTurnLeft();
-    RightUpTurnLeft();
-    RightCenterTurnLeft();
+    LeftUpTurnLeft(speed);
+    LeftCenterTurnLeft(speed);
+    RightUpTurnLeft(speed);
+    RightCenterTurnLeft(speed);
     i++;
   }
 }
 
-void WalkForward(int cycle)
+void WalkForward(unsigned int cycle, unsigned int speed)
 {
+  speed = constrain(speed, 1, 100);
+  speed = map(speed, 1, 100, MIN_SPEED, MAX_SPEED);
   int i = 0;
   while (i <= cycle)
   {
-    RightUpForward(0, 0);
-    //RightCenterForward();
-    LeftUpForward(0, 0);
-    //LeftCenterForward();
+    RightUpForward(0, 0, speed);
+    RightCenterForward(0, 0, speed);
+    LeftUpForward(0, 0, speed);
+    LeftCenterForward(0, 0, speed);
     i++;
   }
 }
 
-void WalkBackward(int cycle)
+void WalkBackward(unsigned int cycle, unsigned int speed)
 {
+  speed = constrain(speed, 1, 100);
+  speed = map(speed, 1, 100, MIN_SPEED, MAX_SPEED);
   int i = 0;
   while (i <= cycle)
   {
-    RightUpBackward();
-    RightCenterBackward();
-    LeftUpBackward();
-    LeftCenterBackward();
+    RightUpBackward(speed);
+    RightCenterBackward(speed);
+    LeftUpBackward(speed);
+    LeftCenterBackward(speed);
     i++;
   }
 }
 
-void DriveForward(int turn, int cycle)
+void DriveForward(int turn, unsigned int cycle, unsigned int speed)
 {
+  speed = constrain(speed, 1, 100);
+  speed = map(speed, 1, 100, MIN_SPEED, MAX_SPEED);
   turn = constrain(turn, -10, +10);
   int i = 0;
   while (i <= cycle)
   {
     if (turn >= 1)  //Drive Right
     {
-      RightUpForward(0, (turn * 15));
-      //RightCenterForward();
-      LeftUpForward(0, (turn * 15));
-      //LeftCenterForward();
+      RightUpForward(0, (turn * 15), speed);
+      RightCenterForward(0, (turn * 15), speed);
+      LeftUpForward(0, (turn * 15), speed);
+      LeftCenterForward(0, (turn * 15), speed);
     }
 
 
     if (turn <= -1)  //Drive Left
     {
-      RightUpForward((turn * -15), 0);
-      //RightCenterForward();
-      LeftUpForward((turn * -15), 0);
-      //LeftCenterForward();
+      RightUpForward((turn * -15), 0, speed);
+      RightCenterForward((turn * -15), 0, speed);
+      LeftUpForward((turn * -15), 0, speed);
+      LeftCenterForward((turn * -15), 0, speed);
     }
 
 
     if (turn == 0)  //Drive Straight
     {
-      RightUpForward(0, 0);
-      //RightCenterForward();
-      LeftUpForward(0, 0);
-      //LeftCenterForward();
+      RightUpForward(0, 0, speed);
+      RightCenterForward(0, 0, speed);
+      LeftUpForward(0, 0, speed);
+      LeftCenterForward(0, 0, speed);
     }
 
     i++;
   }
+}
+
+//===================================================================================================
+// SetServo: Writes Servo Positions using ServoGroupMove from ServoEX library
+//===================================================================================================
+void SetServo(unsigned int deltaTime)
+{
+  ServoGroupMove.start();   //start group move
+  AntsyServo[CENTER_SERVO].writeMicroseconds(centerServoValue); //set position to 1st servo, account for error adjustments in defines
+  AntsyServo[RIGHT_SERVO].writeMicroseconds(rightServoValue); // "" ""
+  AntsyServo[LEFT_SERVO].writeMicroseconds(leftServoValue);
+  ServoGroupMove.commit(deltaTime); //commit the group move, pass along an interpolation time value
+}
+
+void SetServoCenter(unsigned int deltaTime)
+{
+  ServoGroupMove.start();   //start group move
+  AntsyServo[CENTER_SERVO].writeMicroseconds(CENTER_CENTER); //set position to 1st servo, account for error adjustments in defines
+  AntsyServo[RIGHT_SERVO].writeMicroseconds(RIGHT_CENTER); // "" ""
+  AntsyServo[LEFT_SERVO].writeMicroseconds(LEFT_CENTER);
+  ServoGroupMove.commit(deltaTime); //commit the group move, pass along an interpolation time value
 }
