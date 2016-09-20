@@ -18,8 +18,8 @@ Walking.h
 //####################################################//
 
 // Min/Max pulse values in microseconds to send to the servo
-#define CENTER_MIN     1050  
-#define CENTER_MAX     1950 
+#define CENTER_MIN     1050
+#define CENTER_MAX     1950
 #define CENTER_CENTER  1500
 
 // Legacy defines, for reference.
@@ -32,8 +32,8 @@ Walking.h
 //####################################################//
 
 // Min/Max pulse values in microseconds to send to the servo
-#define RIGHT_MIN     1300     
-#define RIGHT_MAX     1700    
+#define RIGHT_MIN     1300
+#define RIGHT_MAX     1700
 #define RIGHT_CENTER  1500
 
 // Legacy defines, for reference.
@@ -46,7 +46,7 @@ Walking.h
 //####################################################//
 
 // Min/Max pulse values in microseconds to send to the servo
-#define LEFT_MIN     1300   
+#define LEFT_MIN     1300
 #define LEFT_MAX     1700
 #define LEFT_CENTER  1500
 
@@ -55,9 +55,9 @@ Walking.h
 #define LEFT_BACKSWEEP   1700  //Left horizontal legs backward sweep value. Higher value moves left legs backward further.
 
 // Placeholder for interpolation implementation.
-extern int centerServoValue;   //current positional value being sent to the center servo. 
-extern int rightServoValue;  //current positional value being sent to the right servo. 
-extern int leftServoValue;  //current positional value being sent to the left servo. 
+extern int centerServoValue;   //current positional value being sent to the center servo.
+extern int rightServoValue;  //current positional value being sent to the right servo.
+extern int leftServoValue;  //current positional value being sent to the left servo.
 
 // Delay values for walking sequences.
 extern int delayValue;

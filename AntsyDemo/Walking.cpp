@@ -2,7 +2,7 @@
 Walking.cpp
  *****************************************************************************/
 
-#include <Servo.h> 
+#include <Servo.h>
 #include <Arduino.h>
 #include "Walking.h"
 
@@ -44,9 +44,9 @@ int leftBackSweep = LEFT_CENTER + leftSweepRange;  //1700
 
 
 // Placeholder for interpolation implementation.
-int centerServoValue = 1500;   //current positional value being sent to the center servo. 
-int rightServoValue = 1500;  //current positional value being sent to the right servo. 
-int leftServoValue = 1500;  //current positional value being sent to the left servo. 
+int centerServoValue = 1500;   //current positional value being sent to the center servo.
+int rightServoValue = 1500;  //current positional value being sent to the right servo.
+int leftServoValue = 1500;  //current positional value being sent to the left servo.
 
 // Delay values for walking sequences.
 int delayValue = 180;
@@ -59,69 +59,69 @@ int delayValue2 = 250;
 
 void RightUpForward(int leftOffset, int rightOffset)
 {
-  centerServo.writeMicroseconds(centerRightDown); 
-  delay(delayValue);  
+  centerServo.writeMicroseconds(centerRightDown);
+  delay(delayValue);
   rightServo.writeMicroseconds(rightFrontSweep - rightOffset);  //1700 normally
   leftServo.writeMicroseconds(leftBackSweep - leftOffset);    //1700 normally
-  delay(delayValue2); 
-  
-  #ifdef DEBUG
+  delay(delayValue2);
+
+#ifdef DEBUG
   int tempRight = (rightFrontSweep - rightOffset);
   int tempLeft = (leftBackSweep - leftOffset);
   Serial.println("RightUpForward");
   Serial.print("Right: ");
-  Serial.println(tempRight); 
+  Serial.println(tempRight);
   Serial.println(" ");
   Serial.print("Left: ");
-  Serial.println(tempLeft);  
+  Serial.println(tempLeft);
   Serial.println(" ");
-  #endif
+#endif
 }
 
 void LeftUpForward(int leftOffset, int rightOffset)
 {
-  centerServo.writeMicroseconds(centerLeftDown); 
-  delay(delayValue); 
+  centerServo.writeMicroseconds(centerLeftDown);
+  delay(delayValue);
   rightServo.writeMicroseconds(rightBackSweep + rightOffset);  //1300 normally
-  leftServo.writeMicroseconds(leftFrontSweep + leftOffset);  //1300 normally 
-  delay(delayValue2); 
-  
-  #ifdef DEBUG
+  leftServo.writeMicroseconds(leftFrontSweep + leftOffset);  //1300 normally
+  delay(delayValue2);
+
+#ifdef DEBUG
   int tempRight = (rightBackSweep + rightOffset);
   int tempLeft = (leftFrontSweep + leftOffset);
   Serial.println("LeftUpForward");
   Serial.print("Right: ");
-  Serial.println(tempRight); 
+  Serial.println(tempRight);
   Serial.println(" ");
   Serial.print("Left: ");
-  Serial.println(tempLeft);  
+  Serial.println(tempLeft);
   Serial.println(" ");
-  #endif
+#endif
 
 }
 
 void RightCenterForward()
 {
-  centerServo.writeMicroseconds(CENTER_CENTER); 
+  centerServo.writeMicroseconds(CENTER_CENTER);
   rightServo.writeMicroseconds(rightFrontSweep);
   leftServo.writeMicroseconds(leftBackSweep);
-  delay(delayValue2); 
+  delay(delayValue2);
 }
 
 void LeftCenterForward()
 {
-  centerServo.writeMicroseconds(CENTER_CENTER); 
+  centerServo.writeMicroseconds(CENTER_CENTER);
   rightServo.writeMicroseconds(rightBackSweep);
   leftServo.writeMicroseconds(leftFrontSweep);
-  delay(delayValue2); 
+  delay(delayValue2);
 }
 
 void Center()
 {
-  centerServo.writeMicroseconds(CENTER_CENTER); 
+  centerServo.writeMicroseconds(CENTER_CENTER);
   rightServo.writeMicroseconds(RIGHT_CENTER);
   leftServo.writeMicroseconds(LEFT_CENTER);
-  delay(delayValue2); 
+  delay(delayValue2);
 }
 
 //####################################################//
@@ -130,34 +130,34 @@ void Center()
 
 void RightUpBackward()
 {
-  centerServo.writeMicroseconds(centerRightDown); 
+  centerServo.writeMicroseconds(centerRightDown);
   rightServo.writeMicroseconds(rightBackSweep);
   leftServo.writeMicroseconds(leftFrontSweep);
-  delay(delayValue); 
+  delay(delayValue);
 }
 
 void LeftUpBackward()
 {
-  centerServo.writeMicroseconds(centerLeftDown); 
+  centerServo.writeMicroseconds(centerLeftDown);
   rightServo.writeMicroseconds(rightFrontSweep);
   leftServo.writeMicroseconds(leftBackSweep);
-  delay(delayValue); 
+  delay(delayValue);
 }
 
 void RightCenterBackward()
 {
-  centerServo.writeMicroseconds(CENTER_CENTER); 
+  centerServo.writeMicroseconds(CENTER_CENTER);
   rightServo.writeMicroseconds(rightBackSweep);
   leftServo.writeMicroseconds(leftFrontSweep);
-  delay(delayValue); 
+  delay(delayValue);
 }
 
 void LeftCenterBackward()
 {
-  centerServo.writeMicroseconds(CENTER_CENTER); 
+  centerServo.writeMicroseconds(CENTER_CENTER);
   rightServo.writeMicroseconds(rightFrontSweep);
   leftServo.writeMicroseconds(leftBackSweep);
-  delay(delayValue); 
+  delay(delayValue);
 }
 
 
@@ -168,34 +168,34 @@ void LeftCenterBackward()
 
 void RightUpTurnRight()
 {
-  centerServo.writeMicroseconds(centerRightDown); 
+  centerServo.writeMicroseconds(centerRightDown);
   rightServo.writeMicroseconds(rightBackSweep);
   leftServo.writeMicroseconds(leftBackSweep);
-  delay(delayValue); 
+  delay(delayValue);
 }
 
 void LeftUpTurnRight()
 {
-  centerServo.writeMicroseconds(centerLeftDown); 
+  centerServo.writeMicroseconds(centerLeftDown);
   rightServo.writeMicroseconds(rightFrontSweep);
   leftServo.writeMicroseconds(leftFrontSweep);
-  delay(delayValue); 
+  delay(delayValue);
 }
 
 void RightCenterTurnRight()
 {
-  centerServo.writeMicroseconds(CENTER_CENTER); 
+  centerServo.writeMicroseconds(CENTER_CENTER);
   rightServo.writeMicroseconds(rightBackSweep);
   leftServo.writeMicroseconds(leftBackSweep);
-  delay(delayValue); 
+  delay(delayValue);
 }
 
 void LeftCenterTurnRight()
 {
-  centerServo.writeMicroseconds(CENTER_CENTER); 
+  centerServo.writeMicroseconds(CENTER_CENTER);
   rightServo.writeMicroseconds(rightFrontSweep);
   leftServo.writeMicroseconds(leftFrontSweep);
-  delay(delayValue); 
+  delay(delayValue);
 }
 
 
@@ -205,34 +205,34 @@ void LeftCenterTurnRight()
 
 void RightUpTurnLeft()
 {
-  centerServo.writeMicroseconds(centerRightDown); 
+  centerServo.writeMicroseconds(centerRightDown);
   rightServo.writeMicroseconds(rightFrontSweep);
   leftServo.writeMicroseconds(leftFrontSweep);
-  delay(delayValue); 
+  delay(delayValue);
 }
 
 void LeftUpTurnLeft()
 {
-  centerServo.writeMicroseconds(centerLeftDown); 
+  centerServo.writeMicroseconds(centerLeftDown);
   rightServo.writeMicroseconds(rightBackSweep);
   leftServo.writeMicroseconds(leftBackSweep);
-  delay(delayValue); 
+  delay(delayValue);
 }
 
 void RightCenterTurnLeft()
 {
-  centerServo.writeMicroseconds(CENTER_CENTER); 
+  centerServo.writeMicroseconds(CENTER_CENTER);
   rightServo.writeMicroseconds(rightFrontSweep);
   leftServo.writeMicroseconds(leftFrontSweep);
-  delay(delayValue); 
+  delay(delayValue);
 }
 
 void LeftCenterTurnLeft()
 {
-  centerServo.writeMicroseconds(CENTER_CENTER); 
+  centerServo.writeMicroseconds(CENTER_CENTER);
   rightServo.writeMicroseconds(rightBackSweep);
   leftServo.writeMicroseconds(leftBackSweep);
-  delay(delayValue); 
+  delay(delayValue);
 }
 
 
@@ -243,12 +243,12 @@ void LeftCenterTurnLeft()
 void TurnRight(int cycle)
 {
   int i = 0;
-  while(i <= cycle)
+  while (i <= cycle)
   {
     LeftUpTurnRight();
     LeftCenterTurnRight();
-    RightUpTurnRight();  
-    RightCenterTurnRight();  
+    RightUpTurnRight();
+    RightCenterTurnRight();
     i++;
   }
 }
@@ -256,11 +256,11 @@ void TurnRight(int cycle)
 void TurnLeft(int cycle)
 {
   int i = 0;
-  while(i <= cycle)
+  while (i <= cycle)
   {
     LeftUpTurnLeft();
     LeftCenterTurnLeft();
-    RightUpTurnLeft();  
+    RightUpTurnLeft();
     RightCenterTurnLeft();
     i++;
   }
@@ -269,7 +269,7 @@ void TurnLeft(int cycle)
 void WalkForward(int cycle)
 {
   int i = 0;
-  while(i <= cycle)
+  while (i <= cycle)
   {
     RightUpForward(0, 0);
     //RightCenterForward();
@@ -282,7 +282,7 @@ void WalkForward(int cycle)
 void WalkBackward(int cycle)
 {
   int i = 0;
-  while(i <= cycle)
+  while (i <= cycle)
   {
     RightUpBackward();
     RightCenterBackward();
@@ -296,34 +296,34 @@ void DriveForward(int turn, int cycle)
 {
   turn = constrain(turn, -10, +10);
   int i = 0;
-  while(i <= cycle)
+  while (i <= cycle)
   {
     if (turn >= 1)  //Drive Right
     {
-    RightUpForward(0, (turn * 15));
-    //RightCenterForward();
-    LeftUpForward(0, (turn * 15));
-    //LeftCenterForward();
+      RightUpForward(0, (turn * 15));
+      //RightCenterForward();
+      LeftUpForward(0, (turn * 15));
+      //LeftCenterForward();
     }
-    
-    
+
+
     if (turn <= -1)  //Drive Left
     {
-    RightUpForward((turn * -15), 0);
-    //RightCenterForward();
-    LeftUpForward((turn * -15), 0);
-    //LeftCenterForward();
+      RightUpForward((turn * -15), 0);
+      //RightCenterForward();
+      LeftUpForward((turn * -15), 0);
+      //LeftCenterForward();
     }
-    
+
 
     if (turn == 0)  //Drive Straight
     {
-    RightUpForward(0, 0);
-    //RightCenterForward();
-    LeftUpForward(0, 0);
-    //LeftCenterForward();
+      RightUpForward(0, 0);
+      //RightCenterForward();
+      LeftUpForward(0, 0);
+      //LeftCenterForward();
     }
-    
+
     i++;
   }
 }
