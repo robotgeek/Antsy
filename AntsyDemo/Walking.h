@@ -84,6 +84,7 @@ extern int centerLeftDown;
 //####################################################//
 
 extern int rightSweepRange;  //Range of this value should be 100-200. Controls the distance of horizontal sweep motion.
+extern int rightSweepRangeOffset;
 extern int rightFrontSweep;
 extern int rightBackSweep;
 
@@ -93,6 +94,7 @@ extern int rightBackSweep;
 //####################################################//
 
 extern int leftSweepRange;  //Range of this value should be 100-200. Controls the distance of horizontal sweep motion.
+extern int leftSweepRangeOffset;
 extern int leftFrontSweep;
 extern int leftBackSweep;
 
@@ -100,9 +102,9 @@ extern int leftBackSweep;
 //FORWARD WALKING POSES
 //####################################################//
 
-void RightUpForward();
+void RightUpForward(int leftOffset, int rightOffset);
 
-void LeftUpForward();
+void LeftUpForward(int leftOffset, int rightOffset);
 
 void RightCenterForward();
 
@@ -162,5 +164,6 @@ void WalkForward(int cycle);
 
 void WalkBackward(int cycle);
 
+void DriveForward(int turn, int cycle);
 
 #endif

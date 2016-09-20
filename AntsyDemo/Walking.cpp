@@ -6,6 +6,8 @@ Walking.cpp
 #include <Arduino.h>
 #include "Walking.h"
 
+#define DEBUG
+
 //####################################################//
 //Servo Objects
 //####################################################//
@@ -26,8 +28,9 @@ int centerLeftDown = CENTER_CENTER + centerShiftRange;
 //####################################################//
 
 int rightSweepRange = 200;  //Range of this value should be 100-200. Controls the distance of horizontal sweep motion.
-int rightFrontSweep = RIGHT_CENTER + rightSweepRange;
-int rightBackSweep = RIGHT_CENTER - rightSweepRange;
+int rightSweepRangeOffset;
+int rightFrontSweep = RIGHT_CENTER + rightSweepRange;  //1700
+int rightBackSweep = RIGHT_CENTER - rightSweepRange;  //1300
 
 
 //####################################################//
@@ -35,8 +38,9 @@ int rightBackSweep = RIGHT_CENTER - rightSweepRange;
 //####################################################//
 
 int leftSweepRange = 200;  //Range of this value should be 100-200. Controls the distance of horizontal sweep motion.
-int leftFrontSweep = LEFT_CENTER - leftSweepRange;
-int leftBackSweep = LEFT_CENTER + leftSweepRange;
+int leftSweepRangeOffset;
+int leftFrontSweep = LEFT_CENTER - leftSweepRange;  //1300
+int leftBackSweep = LEFT_CENTER + leftSweepRange;  //1700
 
 
 // Placeholder for interpolation implementation.
@@ -53,22 +57,47 @@ int delayValue2 = 250;
 //FORWARD WALKING POSES
 //####################################################//
 
-void RightUpForward()
+void RightUpForward(int leftOffset, int rightOffset)
 {
   centerServo.writeMicroseconds(centerRightDown); 
   delay(delayValue);  
-  rightServo.writeMicroseconds(rightFrontSweep);
-  leftServo.writeMicroseconds(leftBackSweep);
+  rightServo.writeMicroseconds(rightFrontSweep - rightOffset);  //1700 normally
+  leftServo.writeMicroseconds(leftBackSweep - leftOffset);    //1700 normally
   delay(delayValue2); 
+  
+  #ifdef DEBUG
+  int tempRight = (rightFrontSweep - rightOffset);
+  int tempLeft = (leftBackSweep - leftOffset);
+  Serial.println("RightUpForward");
+  Serial.print("Right: ");
+  Serial.println(tempRight); 
+  Serial.println(" ");
+  Serial.print("Left: ");
+  Serial.println(tempLeft);  
+  Serial.println(" ");
+  #endif
 }
 
-void LeftUpForward()
+void LeftUpForward(int leftOffset, int rightOffset)
 {
   centerServo.writeMicroseconds(centerLeftDown); 
   delay(delayValue); 
-  rightServo.writeMicroseconds(rightBackSweep);
-  leftServo.writeMicroseconds(leftFrontSweep);
+  rightServo.writeMicroseconds(rightBackSweep + rightOffset);  //1300 normally
+  leftServo.writeMicroseconds(leftFrontSweep + leftOffset);  //1300 normally 
   delay(delayValue2); 
+  
+  #ifdef DEBUG
+  int tempRight = (rightBackSweep + rightOffset);
+  int tempLeft = (leftFrontSweep + leftOffset);
+  Serial.println("LeftUpForward");
+  Serial.print("Right: ");
+  Serial.println(tempRight); 
+  Serial.println(" ");
+  Serial.print("Left: ");
+  Serial.println(tempLeft);  
+  Serial.println(" ");
+  #endif
+
 }
 
 void RightCenterForward()
@@ -242,9 +271,9 @@ void WalkForward(int cycle)
   int i = 0;
   while(i <= cycle)
   {
-    RightUpForward();
+    RightUpForward(0, 0);
     //RightCenterForward();
-    LeftUpForward();
+    LeftUpForward(0, 0);
     //LeftCenterForward();
     i++;
   }
@@ -259,6 +288,42 @@ void WalkBackward(int cycle)
     RightCenterBackward();
     LeftUpBackward();
     LeftCenterBackward();
+    i++;
+  }
+}
+
+void DriveForward(int turn, int cycle)
+{
+  turn = constrain(turn, -10, +10);
+  int i = 0;
+  while(i <= cycle)
+  {
+    if (turn >= 1)  //Drive Right
+    {
+    RightUpForward(0, (turn * 15));
+    //RightCenterForward();
+    LeftUpForward(0, (turn * 15));
+    //LeftCenterForward();
+    }
+    
+    
+    if (turn <= -1)  //Drive Left
+    {
+    RightUpForward((turn * -15), 0);
+    //RightCenterForward();
+    LeftUpForward((turn * -15), 0);
+    //LeftCenterForward();
+    }
+    
+
+    if (turn == 0)  //Drive Straight
+    {
+    RightUpForward(0, 0);
+    //RightCenterForward();
+    LeftUpForward(0, 0);
+    //LeftCenterForward();
+    }
+    
     i++;
   }
 }
