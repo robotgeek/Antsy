@@ -75,6 +75,10 @@ void loop()
   {
     DriveForward(0, 0, currentWalkCommand.moveSpeed);
   }
+  else if ( currentWalkCommand.fwdBack < 0 ) //Moving backwards only
+  {
+    WalkBackward(0, currentWalkCommand.moveSpeed);
+  }
   delay(50);
 
 //  DriveForward(5, 10, 100);  // DriveForward(TurnLeft/Right, Cycles, speed) Turn Left/Right is -10 through +10. 0 is straight. Speed is 1-100.
