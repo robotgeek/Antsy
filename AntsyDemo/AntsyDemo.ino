@@ -6,11 +6,15 @@
  *
  ***********************************************************************************/
 
-
 //Includes
 #include <ServoEx.h>
 #include "Walking.h"
 #include "Gamepad.h"
+#include "Sounds.h"
+#include "Lights.h"
+#include "LightSensors.h"
+
+bool lightSensorsEnabled = false;
 
 //####################################################//
 // Sensor Setup
@@ -27,6 +31,11 @@ void setup()
   Serial.begin(38400);
 
   GamepadEnable();
+
+  SoundEnable();
+  SoundPlay(LAUGH);
+
+  LightsEnable();
 
   initializeServos();
   //Set servos to center values
@@ -51,6 +60,23 @@ void loop()
     if ( my_gamepad.button_press_left() ) currentWalkCommand.leftRight = - 10;
     else if ( my_gamepad.button_press_right() ) currentWalkCommand.leftRight = 10;
     else currentWalkCommand.leftRight = 0;
+
+    //Check for select press.. If true toggle light sensing mode
+    if ( my_gamepad.button_press_select() )
+    {
+      if ( lightSensorsEnabled == true )
+      {
+        lightSensorsEnabled = false;
+        SoundPlay(DOWN);
+      }
+      else
+      {
+        lightSensorsEnabled = true;
+        SoundPlay(UP);
+      }
+      delay(1000);
+      my_gamepad.update_button_states();
+    }
   }
   else
   {
@@ -78,6 +104,29 @@ void loop()
   else if ( currentWalkCommand.fwdBack < 0 ) //Moving backwards only
   {
     WalkBackward(0, currentWalkCommand.moveSpeed);
+  }
+
+  //Else there are no currentWalkCommand values.. perform light seeking if enabled
+  else if ( lightSensorsEnabled == true )
+  {
+    switch( lightSensors.SeekLight() )
+    {
+    case LightSensors::WALK_FWD:
+      LightsSet( HIGH, HIGH );
+      DriveForward(0, 0, currentWalkCommand.moveSpeed);
+      break;
+    case LightSensors::WALK_LEFT:
+      LightsSet( HIGH, LOW );
+      TurnLeft(0, currentWalkCommand.moveSpeed);
+      break;
+    case LightSensors::WALK_RIGHT:
+      LightsSet( LOW, HIGH );
+      TurnRight(0, currentWalkCommand.moveSpeed);
+      break;
+    case LightSensors::WALK_STOP:
+      LightsSet( LOW, LOW );
+      break;
+    }
   }
   delay(50);
 
