@@ -8,6 +8,13 @@ Walking.cpp
 
 //#define DEBUG
 
+WalkingCommand currentWalkCommand =
+{
+  0,
+  0,
+  100
+};
+
 //####################################################//
 //Servo Objects
 //####################################################//

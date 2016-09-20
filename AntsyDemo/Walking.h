@@ -5,6 +5,15 @@ Walking.h
 #ifndef WALKING
 #define WALKING
 
+struct WalkingCommand
+{
+	int fwdBack; //Fowards is > 0, reverse is < 0,
+	int leftRight; //Left is -1 to -10, right is 1 to 10
+	int moveSpeed; //Slowest is 1, fastest is 100
+};
+
+extern struct WalkingCommand currentWalkCommand;
+
 //####################################################//
 //Servo Objects
 //####################################################//
