@@ -398,3 +398,99 @@ void SetServoCenter(unsigned int deltaTime)
   AntsyServo[LEFT_SERVO].writeMicroseconds(LEFT_CENTER);
   ServoGroupMove.commit(deltaTime); //commit the group move, pass along an interpolation time value
 }
+
+void Wiggle( unsigned int cycle, unsigned int speed )
+{
+  speed = constrain(speed, 1, 100);
+  speed = map(speed, 1, 100, MIN_SPEED, MAX_SPEED);
+  int i = 0;
+  while (i <= cycle)
+  {
+    centerServoValue = 1700;
+    leftServoValue = 1700;
+    rightServoValue = 1700;
+    SetServo(speed);
+    delay(speed);
+
+    centerServoValue = CENTER_CENTER;
+    leftServoValue = LEFT_CENTER;
+    rightServoValue = RIGHT_CENTER;
+    SetServo(speed);
+    delay(speed);
+    i++;
+  }
+}
+
+void Shiver( unsigned int cycle, unsigned int speed )
+{
+  speed = constrain(speed, 1, 100);
+  speed = map(speed, 1, 100, MIN_SPEED / 2, MAX_SPEED / 2);
+  int i = 0;
+  while (i <= cycle)
+  {
+    centerServoValue = 1700;
+    leftServoValue = LEFT_BACKSWEEP;
+    rightServoValue = RIGHT_FRONTSWEEP;
+    SetServo(speed);
+    delay(speed);
+
+    centerServoValue = 1300;
+    leftServoValue = LEFT_FRONTSWEEP;
+    rightServoValue = RIGHT_BACKSWEEP;
+    SetServo(speed);
+    delay(speed);
+
+    centerServoValue = CENTER_CENTER;
+    leftServoValue = LEFT_CENTER;
+    rightServoValue = RIGHT_CENTER;
+    SetServo(speed);
+    delay(speed);
+    i++;
+  }
+}
+
+void Giggle( unsigned int cycle, unsigned int speed )
+{
+  speed = constrain(speed, 1, 100);
+  speed = map(speed, 1, 100, MIN_SPEED, MAX_SPEED);
+  int i = 0;
+  while (i <= cycle)
+  {
+    centerServoValue = CENTER_RIGHTDOWN;
+    SetServo(speed);
+    delay(speed);
+
+    centerServoValue = CENTER_LEFTDOWN;
+    SetServo(speed);
+    delay(speed);
+
+    centerServoValue = CENTER_CENTER;
+    SetServo(speed);
+    delay(speed);
+    i++;
+  }
+}
+
+void Wave( unsigned int cycle, unsigned int speed )
+{
+  speed = constrain(speed, 1, 100);
+  speed = map(speed, 1, 100, MIN_SPEED, MAX_SPEED);
+  int i = 0;
+  centerServoValue = CENTER_RIGHTDOWN;
+  SetServo(speed);
+  delay(speed);
+  while (i <= cycle)
+  {
+    rightServoValue = RIGHT_BACKSWEEP;
+    SetServo(speed);
+    delay(speed);
+    rightServoValue = RIGHT_FRONTSWEEP;
+    SetServo(speed);
+    delay(speed);
+    i++;
+  }
+  rightServoValue = RIGHT_CENTER;
+  centerServoValue = CENTER_CENTER;
+  SetServo(speed);
+  delay(speed);
+}

@@ -77,6 +77,30 @@ void loop()
       delay(1000);
       my_gamepad.update_button_states();
     }
+    if ( my_gamepad.button_press_b() )
+    {
+      SoundPlay(BEEPS);
+      Wiggle(3, currentWalkCommand.moveSpeed);
+      my_gamepad.update_button_states();
+    }
+    if ( my_gamepad.button_press_a() )
+    {
+      SoundPlay(OHH);
+      Shiver(2, currentWalkCommand.moveSpeed);
+      my_gamepad.update_button_states();
+    }
+    if ( my_gamepad.button_press_ta() )
+    {
+      SoundPlay(LAUGH);
+      Giggle(2, currentWalkCommand.moveSpeed);
+      my_gamepad.update_button_states();
+    }
+    if ( my_gamepad.button_press_tb() )
+    {
+      SoundPlay(WHISTLE);
+      Wave(4, currentWalkCommand.moveSpeed);
+      my_gamepad.update_button_states();
+    }
   }
   else
   {

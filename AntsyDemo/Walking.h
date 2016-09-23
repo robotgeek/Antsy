@@ -181,4 +181,13 @@ void SetServoCenter(unsigned int deltaTime);
 
 void initializeServos();
 
+//####################################################//
+//EXTRA FUNCTIONS
+//####################################################//
+
+void Wiggle( unsigned int cycle, unsigned int speed );
+void Shiver( unsigned int cycle, unsigned int speed );
+void Giggle( unsigned int cycle, unsigned int speed );
+void Wave( unsigned int cycle, unsigned int speed );
+
 #endif
