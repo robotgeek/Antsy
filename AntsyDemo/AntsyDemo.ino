@@ -16,6 +16,28 @@
 
 bool lightSensorsEnabled = false;
 
+void sing_test()
+{
+  sing( S_connection  ); delay(500);
+  sing( S_disconnection ); delay(500);
+  sing( S_buttonPushed  ); delay(500);
+  sing( S_mode1     ); delay(500);
+  sing( S_mode2     ); delay(500);
+  sing( S_mode3     ); delay(500);
+  //sing( S_surprise    ); delay(500);
+  sing( S_OhOoh     ); delay(500);
+  //sing( S_OhOoh2    ); delay(500);
+  sing( S_cuddly    ); delay(500);
+  //sing( S_sleeping    ); delay(500);
+  sing( S_happy     ); delay(500);
+  sing( S_superHappy  ); delay(500);
+  sing( S_happy_short   ); delay(500);
+  //sing( S_sad       ); delay(500);
+  sing( S_confused    ); delay(500);
+  sing( S_insect1     ); delay(500);
+  sing( S_insect2     ); delay(500);
+  sing( S_insect3     ); delay(500);
+}
 //####################################################//
 // Sensor Setup
 //####################################################//
@@ -41,6 +63,8 @@ void setup()
   //Set servos to center values
   SetServoCenter(2000);
   delay(1000);
+
+  sing_test(); //Just a test
 }
 
 
@@ -49,7 +73,6 @@ void setup()
 //####################################################//
 void loop()
 {
-
   //Update currentWalkCommand based on gamepad button states
   if ( my_gamepad.update_button_states() )
   {
@@ -77,6 +100,7 @@ void loop()
       delay(1000);
       my_gamepad.update_button_states();
     }
+
     if ( my_gamepad.button_press_b() )
     {
       SoundPlay(BEEPS);
