@@ -1,8 +1,29 @@
 /***********************************************************************************
- *     ______            RobotGeek TriHex Demo              ______
+ *     ______            RobotGeek Antsy (3 Servo Hexapod) Demo            ______
+ *     |    |                                                              |    |
  *
+ *  Wiring:
  *
- *  External Resources
+ *    Center Servo - Digital Pin 9
+ *    Right Servo - Digital Pin 10
+ *    Left Servo - Digital Pin 11
+ *    Buzzer - Digital Pin 12
+ *    IR Receiver - Digital Pin 2
+ *    Right LED - Digital Pin 5
+ *    Left LED - Digital Pin 6
+ *    Right Light Sensor - Analog Pin 0
+ *    Left Light Sensor - Analog Pin 7
+ *
+ *    Jumper for pins 9/10/11 should be set to 'VIN'
+ *    Jumper for pins 3/5/6 should be set to '5V'
+ *
+ *  Control Behavior:
+ *
+ *    IR Gamepad D-Pad buttons controls movement
+ *    IR Gamepad Select button cycles mode ( RemoteControl, RC + Light Seeking, RC + Shade Seeking )
+ *    IR Gamepad A,B,TA,TB buttons perform expressions with movement, light, sounds
+ *
+ *  External Resources:
  *
  ***********************************************************************************/
 
@@ -15,28 +36,6 @@
 #include "LightSensors.h"
 #include "ActivityTimer.h"
 
-void sing_test()
-{
-  sing( S_connection  ); delay(500);
-  sing( S_disconnection ); delay(500);
-  sing( S_buttonPushed  ); delay(500);
-  sing( S_mode1     ); delay(500);
-  sing( S_mode2     ); delay(500);
-  sing( S_mode3     ); delay(500);
-  //sing( S_surprise    ); delay(500);
-  sing( S_OhOoh     ); delay(500);
-  //sing( S_OhOoh2    ); delay(500);
-  sing( S_cuddly    ); delay(500);
-  //sing( S_sleeping    ); delay(500);
-  sing( S_happy     ); delay(500);
-  sing( S_superHappy  ); delay(500);
-  sing( S_happy_short   ); delay(500);
-  //sing( S_sad       ); delay(500);
-  sing( S_confused    ); delay(500);
-  sing( S_insect1     ); delay(500);
-  sing( S_insect2     ); delay(500);
-  sing( S_insect3     ); delay(500);
-}
 //####################################################//
 // Sensor Setup
 //####################################################//
@@ -48,7 +47,6 @@ void sing_test()
 
 void setup()
 {
-  //test
   Serial.begin(38400);
 
   GamepadEnable();
@@ -60,8 +58,8 @@ void setup()
   sing( S_cuddly );
 
   initializeServos();
-  //Set servos to center values
-  SetServoCenter(2000);
+
+  SetServoCenter(2000); //Set servos to center values over 2000ms period
   delay(1000);
 
   myActivityTimer.setTimeoutThreshold( 10 ); //10 seconds of inactivity until Antsy requests your attention
