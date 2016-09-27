@@ -3,7 +3,7 @@
 
 //#define USB_DEBUG
 
-LightSensors lightSensors;
+LightSensors myLightSensors;
 
 int LightSensors::SeekLight()
 {

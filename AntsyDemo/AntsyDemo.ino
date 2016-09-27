@@ -13,13 +13,7 @@
 #include "Sounds.h"
 #include "Lights.h"
 #include "LightSensors.h"
-enum LightSensorModes
-{
-  LIGHT_SENSE_OFF,
-  LIGHT_SENSE_LIGHT,
-  LIGHT_SENSE_DARK
-} lightSensorMode = LIGHT_SENSE_OFF;
-bool lightSensorsEnabled = false;
+#include "ActivityTimer.h"
 
 void sing_test()
 {
@@ -70,7 +64,7 @@ void setup()
   SetServoCenter(2000);
   delay(1000);
 
-  //sing_test(); //Just a test
+  myActivityTimer.setTimeoutThreshold( 10 ); //10 seconds of inactivity until Antsy requests your attention
 }
 
 
@@ -79,9 +73,18 @@ void setup()
 //####################################################//
 void loop()
 {
+  //Always check the ActivityTimer to see if the robot is inactive
+  if ( !myActivityTimer.checkActivityTimer() )
+  {
+    //Inactive robot.. I'll try to get your attention!
+    sing( S_OhOoh );
+    delay(1000);
+  }
   //Update currentWalkCommand based on gamepad button states
   if ( my_gamepad.update_button_states() )
   {
+    myActivityTimer.updateActivityTimer(); //Update activity timer so we don't timeout.
+
     if ( my_gamepad.button_press_up() ) currentWalkCommand.fwdBack = 1;
     else if ( my_gamepad.button_press_down() ) currentWalkCommand.fwdBack = -1;
     else currentWalkCommand.fwdBack = 0;
@@ -93,19 +96,19 @@ void loop()
     //Check for select press.. If true toggle light sensing mode
     if ( my_gamepad.button_press_select() )
     {
-      if ( lightSensorMode == LIGHT_SENSE_OFF )
+      if ( myLightSensors.lightSensorMode == LightSensors::LIGHT_SENSE_OFF )
       {
-        lightSensorMode = LIGHT_SENSE_LIGHT;
+        myLightSensors.lightSensorMode = LightSensors::LIGHT_SENSE_LIGHT;
         sing( S_mode2 );
       }
-      else if ( lightSensorMode == LIGHT_SENSE_LIGHT )
+      else if ( myLightSensors.lightSensorMode == LightSensors::LIGHT_SENSE_LIGHT )
       {
-        lightSensorMode = LIGHT_SENSE_DARK;
+        myLightSensors.lightSensorMode = LightSensors::LIGHT_SENSE_DARK;
         sing( S_mode3 );
       }
       else
       {
-        lightSensorMode = LIGHT_SENSE_OFF;
+        myLightSensors.lightSensorMode = LightSensors::LIGHT_SENSE_OFF;
         sing( S_mode1 );
       }
       delay(1000);
@@ -166,28 +169,32 @@ void loop()
   }
 
   //Else there are no currentWalkCommand values.. perform light seeking if enabled
-  else if ( lightSensorMode != LIGHT_SENSE_OFF )
+  else if ( myLightSensors.lightSensorMode != LightSensors::LIGHT_SENSE_OFF )
   {
     int lightSenseCommand = -1;
-    if ( lightSensorMode == LIGHT_SENSE_LIGHT ) lightSenseCommand = lightSensors.SeekLight();
-    else lightSenseCommand = lightSensors.SeekDark();
+    if ( myLightSensors.lightSensorMode == LightSensors::LIGHT_SENSE_LIGHT ) lightSenseCommand = myLightSensors.SeekLight();
+    else lightSenseCommand = myLightSensors.SeekDark();
     switch( lightSenseCommand )
     {
     case LightSensors::WALK_FWD:
       LightsSet( HIGH, HIGH );
       DriveForward(0, 0, currentWalkCommand.moveSpeed);
+      myActivityTimer.updateActivityTimer();
       break;
     case LightSensors::WALK_REV:
       LightsSet( HIGH, HIGH );
       WalkBackward(0, currentWalkCommand.moveSpeed);
+      myActivityTimer.updateActivityTimer();
       break;
     case LightSensors::WALK_LEFT:
       LightsSet( HIGH, LOW );
       TurnLeft(0, currentWalkCommand.moveSpeed);
+      myActivityTimer.updateActivityTimer();
       break;
     case LightSensors::WALK_RIGHT:
       LightsSet( LOW, HIGH );
       TurnRight(0, currentWalkCommand.moveSpeed);
+      myActivityTimer.updateActivityTimer();
       break;
     case LightSensors::WALK_STOP:
       LightsSet( LOW, LOW );

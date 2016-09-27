@@ -23,6 +23,14 @@ class LightSensors
       WALK_STOP
     };
 
+    enum LightSensorModes
+    {
+      LIGHT_SENSE_OFF,
+      LIGHT_SENSE_LIGHT,
+      LIGHT_SENSE_DARK
+    }
+    lightSensorMode = LIGHT_SENSE_OFF;
+
     LightSensors() {}
 
     int SeekLight();
@@ -33,8 +41,9 @@ class LightSensors
   private:
     int _sensor_left_trim;
     int _sensor_right_trim;
+    bool _sensors_enabled;
 };
 
-extern LightSensors lightSensors;
+extern LightSensors myLightSensors;
 
 #endif
