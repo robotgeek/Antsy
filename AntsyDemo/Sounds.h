@@ -1,6 +1,8 @@
 #ifndef SOUNDS_H
 #define SOUNDS_H
 
+#include "Lights.h"
+
 #define SPKR_PIN 12
 
 enum SoundIDs
@@ -131,8 +133,10 @@ void beep(float noteFrequency, long noteDuration)
   // Play the note for the calculated loopTime.
   for (x = 0; x < loopTime; x++)
   {
+    LightsSet( HIGH, HIGH );
     digitalWrite(SPKR_PIN, HIGH);
     delayMicroseconds(microsecondsPerWave);
+    LightsSet( LOW, LOW );
     digitalWrite(SPKR_PIN, LOW);
     delayMicroseconds(microsecondsPerWave);
   }

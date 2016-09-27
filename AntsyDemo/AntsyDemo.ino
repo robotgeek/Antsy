@@ -13,7 +13,12 @@
 #include "Sounds.h"
 #include "Lights.h"
 #include "LightSensors.h"
-
+enum LightSensorModes
+{
+  LIGHT_SENSE_OFF,
+  LIGHT_SENSE_LIGHT,
+  LIGHT_SENSE_DARK
+} lightSensorMode = LIGHT_SENSE_OFF;
 bool lightSensorsEnabled = false;
 
 void sing_test()
@@ -55,16 +60,17 @@ void setup()
   GamepadEnable();
 
   SoundEnable();
-  SoundPlay(LAUGH);
 
   LightsEnable();
+
+  sing( S_cuddly );
 
   initializeServos();
   //Set servos to center values
   SetServoCenter(2000);
   delay(1000);
 
-  sing_test(); //Just a test
+  //sing_test(); //Just a test
 }
 
 
@@ -87,15 +93,20 @@ void loop()
     //Check for select press.. If true toggle light sensing mode
     if ( my_gamepad.button_press_select() )
     {
-      if ( lightSensorsEnabled == true )
+      if ( lightSensorMode == LIGHT_SENSE_OFF )
       {
-        lightSensorsEnabled = false;
-        SoundPlay(DOWN);
+        lightSensorMode = LIGHT_SENSE_LIGHT;
+        sing( S_mode2 );
+      }
+      else if ( lightSensorMode == LIGHT_SENSE_LIGHT )
+      {
+        lightSensorMode = LIGHT_SENSE_DARK;
+        sing( S_mode3 );
       }
       else
       {
-        lightSensorsEnabled = true;
-        SoundPlay(UP);
+        lightSensorMode = LIGHT_SENSE_OFF;
+        sing( S_mode1 );
       }
       delay(1000);
       my_gamepad.update_button_states();
@@ -103,7 +114,7 @@ void loop()
 
     if ( my_gamepad.button_press_b() )
     {
-      SoundPlay(BEEPS);
+      sing( S_insect1 );
       Wiggle(3, currentWalkCommand.moveSpeed);
       my_gamepad.update_button_states();
     }
@@ -155,13 +166,20 @@ void loop()
   }
 
   //Else there are no currentWalkCommand values.. perform light seeking if enabled
-  else if ( lightSensorsEnabled == true )
+  else if ( lightSensorMode != LIGHT_SENSE_OFF )
   {
-    switch( lightSensors.SeekLight() )
+    int lightSenseCommand = -1;
+    if ( lightSensorMode == LIGHT_SENSE_LIGHT ) lightSenseCommand = lightSensors.SeekLight();
+    else lightSenseCommand = lightSensors.SeekDark();
+    switch( lightSenseCommand )
     {
     case LightSensors::WALK_FWD:
       LightsSet( HIGH, HIGH );
       DriveForward(0, 0, currentWalkCommand.moveSpeed);
+      break;
+    case LightSensors::WALK_REV:
+      LightsSet( HIGH, HIGH );
+      WalkBackward(0, currentWalkCommand.moveSpeed);
       break;
     case LightSensors::WALK_LEFT:
       LightsSet( HIGH, LOW );

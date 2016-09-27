@@ -76,7 +76,7 @@ int LightSensors::SeekDark()
     return WALK_RIGHT;
   }
 
-  return WALK_FWD;
+  return WALK_REV;
 }
 
 void LightSensors::UpdateTrims( int left, int right )

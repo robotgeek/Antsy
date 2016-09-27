@@ -17,6 +17,7 @@ class LightSensors
     enum WALK_CMDS
     {
       WALK_FWD,
+      WALK_REV,
       WALK_LEFT,
       WALK_RIGHT,
       WALK_STOP
