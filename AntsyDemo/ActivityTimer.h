@@ -15,7 +15,6 @@ class ActivityTimer
 		unsigned long _lastActivityTimestamp = millis();
 };
 
-
 extern ActivityTimer myActivityTimer;
 
 #endif

@@ -6,6 +6,7 @@ void ActivityTimer::setTimeoutThreshold( unsigned long seconds )
 {
 	_activitiyTimeoutThreshold = seconds * 1000; //store as milliseconds
 }
+
 void ActivityTimer::updateActivityTimer()
 {
 	_lastActivityTimestamp = millis();

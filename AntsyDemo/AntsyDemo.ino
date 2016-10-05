@@ -23,23 +23,18 @@
  *    IR Gamepad Select button cycles mode ( RemoteControl, RC + Light Seeking, RC + Shade Seeking )
  *    IR Gamepad A,B,TA,TB buttons perform expressions with movement, light, sounds
  *
- *  External Resources:
- *
  ***********************************************************************************/
 
-//Includes
 #include <ServoEx.h>
+#include <PiezoEffects.h>
 #include "Walking.h"
 #include "Gamepad.h"
-#include "Sounds.h"
 #include "Lights.h"
 #include "LightSensors.h"
 #include "ActivityTimer.h"
 
-//####################################################//
-// Sensor Setup
-//####################################################//
-
+//Piezo buzzer on Digital Pin 12 with flashing LEDs on 5 and 6
+PiezoEffects mySounds( 12, 5, 6 );
 
 //####################################################//
 //Setup
@@ -51,11 +46,9 @@ void setup()
 
   GamepadEnable();
 
-  SoundEnable();
-
   LightsEnable();
 
-  sing( S_cuddly );
+  mySounds.play( soundCuddly );
 
   initializeServos();
 
@@ -65,17 +58,17 @@ void setup()
   myActivityTimer.setTimeoutThreshold( 10 ); //10 seconds of inactivity until Antsy requests your attention
 }
 
-
 //####################################################//
 //Main Loop
 //####################################################//
+
 void loop()
 {
   //Always check the ActivityTimer to see if the robot is inactive
   if ( !myActivityTimer.checkActivityTimer() )
   {
     //Inactive robot.. I'll try to get your attention!
-    sing( S_OhOoh );
+    mySounds.play( soundOhOoh );
     delay(1000);
   }
   //Update currentWalkCommand based on gamepad button states
@@ -97,48 +90,49 @@ void loop()
       if ( myLightSensors.lightSensorMode == LightSensors::LIGHT_SENSE_OFF )
       {
         myLightSensors.lightSensorMode = LightSensors::LIGHT_SENSE_LIGHT;
-        sing( S_mode2 );
+        mySounds.play( soundMode2 );
       }
       else if ( myLightSensors.lightSensorMode == LightSensors::LIGHT_SENSE_LIGHT )
       {
         myLightSensors.lightSensorMode = LightSensors::LIGHT_SENSE_DARK;
-        sing( S_mode3 );
+        mySounds.play( soundMode3 );
       }
       else
       {
         myLightSensors.lightSensorMode = LightSensors::LIGHT_SENSE_OFF;
-        sing( S_mode1 );
+        mySounds.play( soundMode1 );
       }
       delay(1000);
       my_gamepad.update_button_states();
     }
 
+    //Check other buttons for sound and motion demonstrations
     if ( my_gamepad.button_press_b() )
     {
-      sing( S_insect1 );
+      mySounds.play( soundInsect1 );
       Wiggle(3, currentWalkCommand.moveSpeed);
       my_gamepad.update_button_states();
     }
     if ( my_gamepad.button_press_a() )
     {
-      SoundPlay(OHH);
+      mySounds.play( soundOhh );
       Shiver(2, currentWalkCommand.moveSpeed);
       my_gamepad.update_button_states();
     }
     if ( my_gamepad.button_press_ta() )
     {
-      SoundPlay(LAUGH);
+      mySounds.play( soundLaugh );
       Giggle(2, currentWalkCommand.moveSpeed);
       my_gamepad.update_button_states();
     }
     if ( my_gamepad.button_press_tb() )
     {
-      SoundPlay(WHISTLE);
+      mySounds.play( soundWhistle );
       Wave(4, currentWalkCommand.moveSpeed);
       my_gamepad.update_button_states();
     }
   }
-  else
+  else //No new button states from gamepad. Cancel previous walk command.
   {
     currentWalkCommand.fwdBack = 0;
     currentWalkCommand.leftRight = 0;
@@ -199,28 +193,6 @@ void loop()
       break;
     }
   }
+
   delay(50);
-
-//  DriveForward(5, 10, 100);  // DriveForward(TurnLeft/Right, Cycles, speed) Turn Left/Right is -10 through +10. 0 is straight. Speed is 1-100.
-//  delay(5000);
-
-//  DriveForward(10, 10, 80);  // DriveForward(TurnLeft/Right, Cycles, speed) Turn Left/Right is -10 through +10. 0 is straight. Speed is 1-100.
-//  delay(5000);
-
-//  DriveForward(-10, 10, 60);  // DriveForward(TurnLeft/Right, Cycles, speed) Turn Left/Right is -10 through +10. 0 is straight. Speed is 1-100.
-//  delay(5000);
-
-//  WalkForward(10, 80);  // WalkForward(Cycles, Speed)
-//  delay(1000);
-//
-//  TurnRight(8, 80);
-//  delay(1000);
-//
-//  TurnLeft(8, 80);
-//  delay(1000);
-//
-//  WalkBackward(10, 80);
-//  delay(1000);
-
 }
-
