@@ -14,7 +14,22 @@ void ActivityTimer::updateActivityTimer()
 
 bool ActivityTimer::checkActivityTimer()
 {
-	//Returning true if we have updated activity timer within the threshold period
-	//Returning false if last activity update and timeout threshold are greater than the time now
-	return ( _lastActivityTimestamp + _activitiyTimeoutThreshold > millis() );
+	//Returning true if the activity timer has crossed the threshold (inactive robot)
+	return ( _lastActivityTimestamp + _activitiyTimeoutThreshold < millis() );
+}
+
+void ActivityTimer::setAlertInterval( unsigned long seconds )
+{
+	_alertInterval = seconds * 1000; //store as milliseconds
+}
+
+bool ActivityTimer::checkAlertInterval()
+{
+	//Returning true if the activity alert has crossed the threshold (time to alert)
+	return ( _lastActivityAlert + _alertInterval < millis() );
+}
+
+void ActivityTimer::updateAlertInterval()
+{
+	_lastActivityAlert = millis();
 }

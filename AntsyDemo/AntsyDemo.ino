@@ -55,7 +55,8 @@ void setup()
   SetServoCenter(2000); //Set servos to center values over 2000ms period
   delay(1000);
 
-  myActivityTimer.setTimeoutThreshold( 10 ); //10 seconds of inactivity until Antsy requests your attention
+  myActivityTimer.setTimeoutThreshold( 15 ); //15 seconds of inactivity until Antsy requests your attention
+  myActivityTimer.setAlertInterval( 10 ); //10 seconds between alerts when inactive
 }
 
 //####################################################//
@@ -65,12 +66,16 @@ void setup()
 void loop()
 {
   //Always check the ActivityTimer to see if the robot is inactive
-  if ( !myActivityTimer.checkActivityTimer() )
+  if ( myActivityTimer.checkActivityTimer() )
   {
-    //Inactive robot.. I'll try to get your attention!
-    mySounds.play( soundOhOoh );
-    delay(1000);
+    //Inactive robot.. is it time to try to get your attention?
+    if ( myActivityTimer.checkAlertInterval() )
+    {
+      mySounds.play( soundSad );
+      myActivityTimer.updateAlertInterval();
+    }
   }
+
   //Update currentWalkCommand based on gamepad button states
   if ( my_gamepad.update_button_states() )
   {
