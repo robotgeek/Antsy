@@ -144,9 +144,13 @@ void loop()
   }
 
   //Issue gait commands based on currentWalkCommand values
-  if ( currentWalkCommand.fwdBack > 0 && currentWalkCommand.leftRight != 0 ) //Moving forward and turning
+  if ( currentWalkCommand.fwdBack > 0 ) //Moving forward
   {
     DriveForward(currentWalkCommand.leftRight, 0, currentWalkCommand.moveSpeed);
+  }
+  else if ( currentWalkCommand.fwdBack < 0 ) //Moving backward
+  {
+    DriveBackward(currentWalkCommand.leftRight, 0, currentWalkCommand.moveSpeed);
   }
   else if( currentWalkCommand.leftRight < 0 ) //Turning left only
   {
@@ -155,14 +159,6 @@ void loop()
   else if( currentWalkCommand.leftRight > 0 ) //Turning right only
   {
     TurnRight(0, currentWalkCommand.moveSpeed);
-  }
-  else if ( currentWalkCommand.fwdBack > 0 ) //Moving forward only
-  {
-    DriveForward(0, 0, currentWalkCommand.moveSpeed);
-  }
-  else if ( currentWalkCommand.fwdBack < 0 ) //Moving backwards only
-  {
-    WalkBackward(0, currentWalkCommand.moveSpeed);
   }
 
   //Else there are no currentWalkCommand values.. perform light seeking if enabled

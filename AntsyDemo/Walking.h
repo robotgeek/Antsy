@@ -122,13 +122,13 @@ void LeftCenterForward(unsigned int leftOffset, unsigned int rightOffset, unsign
 //BACKWARD WALKING POSES
 //####################################################//
 
-void RightUpBackward(unsigned int deltaTime);
+void RightUpBackward(unsigned int leftOffset, unsigned int rightOffset, unsigned int deltaTime);
 
-void LeftUpBackward(unsigned int deltaTime);
+void LeftUpBackward(unsigned int leftOffset, unsigned int rightOffset, unsigned int deltaTime);
 
-void RightCenterBackward(unsigned int deltaTime);
+void RightCenterBackward(unsigned int leftOffset, unsigned int rightOffset, unsigned int deltaTime);
 
-void LeftCenterBackward(unsigned int deltaTime);
+void LeftCenterBackward(unsigned int leftOffset, unsigned int rightOffset, unsigned int deltaTime);
 
 
 //####################################################//
@@ -170,6 +170,8 @@ void WalkForward(unsigned int cycle, unsigned int speed);
 void WalkBackward(unsigned int cycle, unsigned int speed);
 
 void DriveForward(int turn, unsigned int cycle, unsigned int speed);
+
+void DriveBackward(int turn, unsigned int cycle, unsigned int speed);
 
 //####################################################//
 //SERVO INTERPOLATION FUNCTIONS

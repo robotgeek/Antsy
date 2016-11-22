@@ -65,9 +65,6 @@ int leftServoValue = 1500;  //current positional value being sent to the left se
 
 // Delay values for walking sequences.
 int delayValue = 25;
-int delayValue2 = 250;
-int time = 250;
-
 
 //####################################################//
 //FORWARD WALKING POSES
@@ -78,8 +75,8 @@ void RightUpForward(unsigned int leftOffset, unsigned int rightOffset, unsigned 
   centerServoValue = centerRightDown;
   rightServoValue = (rightFrontSweep - rightOffset);  //1700 normally
   leftServoValue = (leftBackSweep - leftOffset);    //1700 normally
-  SetServo(time);
-  delay(time);
+  SetServo(deltaTime);
+  delay(deltaTime);
   delay(delayValue);
 
 #ifdef DEBUG
@@ -100,8 +97,8 @@ void LeftUpForward(unsigned int leftOffset, unsigned int rightOffset, unsigned i
   centerServoValue = centerLeftDown;
   rightServoValue = (rightBackSweep + rightOffset);  //1300 normally
   leftServoValue = (leftFrontSweep + leftOffset);  //1300 normally
-  SetServo(time);
-  delay(time);
+  SetServo(deltaTime);
+  delay(deltaTime);
   delay(delayValue);
 
 #ifdef DEBUG
@@ -144,41 +141,41 @@ void LeftCenterForward(unsigned int leftOffset, unsigned int rightOffset, unsign
 //BACKWARD WALKING POSES
 //####################################################//
 
-void RightUpBackward(unsigned int deltaTime)
+void RightUpBackward(unsigned int leftOffset, unsigned int rightOffset, unsigned int deltaTime)
 {
   centerServoValue = (centerRightDown);
-  rightServoValue = (rightBackSweep);
-  leftServoValue = (leftFrontSweep);
+  rightServoValue = (rightBackSweep - rightOffset);
+  leftServoValue = (leftFrontSweep - leftOffset);
   SetServo(deltaTime);
   delay(deltaTime);
   delay(delayValue);
 }
 
-void LeftUpBackward(unsigned int deltaTime)
+void LeftUpBackward(unsigned int leftOffset, unsigned int rightOffset, unsigned int deltaTime)
 {
   centerServoValue = (centerLeftDown);
-  rightServoValue = (rightFrontSweep);
-  leftServoValue = (leftBackSweep);
+  rightServoValue = (rightFrontSweep + rightOffset);
+  leftServoValue = (leftBackSweep + leftOffset);
   SetServo(deltaTime);
   delay(deltaTime);
   delay(delayValue);
 }
 
-void RightCenterBackward(unsigned int deltaTime)
+void RightCenterBackward(unsigned int leftOffset, unsigned int rightOffset, unsigned int deltaTime)
 {
   centerServoValue = (centerCenter);
-  rightServoValue = (rightBackSweep);
-  leftServoValue = (leftFrontSweep);
+  rightServoValue = (rightBackSweep - rightOffset);
+  leftServoValue = (leftFrontSweep - leftOffset);
   SetServo(deltaTime);
   delay(deltaTime);
   delay(delayValue);
 }
 
-void LeftCenterBackward(unsigned int deltaTime)
+void LeftCenterBackward(unsigned int leftOffset, unsigned int rightOffset, unsigned int deltaTime)
 {
   centerServoValue = (centerCenter);
-  rightServoValue = (rightFrontSweep);
-  leftServoValue = (leftBackSweep);
+  rightServoValue = (rightFrontSweep + rightOffset);
+  leftServoValue = (leftBackSweep + leftOffset);
   SetServo(deltaTime);
   delay(deltaTime);
   delay(delayValue);
@@ -332,10 +329,10 @@ void WalkBackward(unsigned int cycle, unsigned int speed)
   int i = 0;
   while (i <= cycle)
   {
-    RightUpBackward(speed);
-    RightCenterBackward(speed);
-    LeftUpBackward(speed);
-    LeftCenterBackward(speed);
+    RightUpBackward(0, 0, speed);
+    RightCenterBackward(0, 0, speed);
+    LeftUpBackward(0, 0, speed);
+    LeftCenterBackward(0, 0, speed);
     i++;
   }
 }
@@ -372,6 +369,40 @@ void DriveForward(int turn, unsigned int cycle, unsigned int speed)
       RightCenterForward(0, 0, speed);
       LeftUpForward(0, 0, speed);
       LeftCenterForward(0, 0, speed);
+    }
+
+    i++;
+  }
+}
+
+void DriveBackward(int turn, unsigned int cycle, unsigned int speed)
+{
+  speed = constrain(speed, 1, 100);
+  speed = map(speed, 1, 100, MIN_SPEED, MAX_SPEED);
+  turn = constrain(turn, -10, +10);
+  int i = 0;
+  while (i <= cycle)
+  {
+    if (turn < 0) //Drive Right
+    {
+      RightUpBackward(0, (turn * 15), speed);
+      RightCenterBackward(0, (turn * 15), speed);
+      LeftUpBackward(0, (turn * 15), speed);
+      LeftCenterBackward(0, (turn * 15), speed);
+    }
+    else if (turn > 0) //Drive Left
+    {
+      RightUpBackward((turn * -15), 0, speed);
+      RightCenterBackward((turn * -15), 0, speed);
+      LeftUpBackward((turn * -15), 0, speed);
+      LeftCenterBackward((turn * -15), 0, speed);
+    }
+    else //Drive Straight
+    {
+      RightUpBackward(0, 0, speed);
+      RightCenterBackward(0, 0, speed);
+      LeftUpBackward(0, 0, speed);
+      LeftCenterBackward(0, 0, speed);
     }
 
     i++;
